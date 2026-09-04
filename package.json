@@ -1,0 +1,16 @@
+{
+  "name": "cowbell-hero",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser-based cowbell rhythm game. No runtime dependencies — these devDependencies are lint-only, for CI.",
+  "scripts": {
+    "lint:js": "eslint src",
+    "lint:html": "html-validate index.html",
+    "lint": "npm run lint:js && npm run lint:html"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "globals": "^15.11.0",
+    "html-validate": "^9.5.0"
+  }
+}

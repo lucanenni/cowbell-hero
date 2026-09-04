@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cowbell Hero - I Need More Cowbell!</title>
+<meta name="description" content="A browser-based rhythm game: ring the cowbell in time with a synthesized rock backing track. No install, no dependencies.">
+<meta property="og:title" content="Cowbell Hero">
+<meta property="og:description" content="A browser-based rhythm game: ring the cowbell in time with a synthesized rock backing track.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lucanenni.github.io/cowbell-hero/">
+<meta property="og:image" content="https://lucanenni.github.io/cowbell-hero/docs/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="docs/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+
+<div id="app">
+  <div class="bg-scene"></div>
+  <div class="bg-spotlight">
+    <div class="spotlight"></div>
+    <div class="spotlight"></div>
+    <div class="spotlight"></div>
+  </div>
+  <div class="fog"></div>
+
+  <!-- Menu -->
+  <div class="screen" id="menu-screen">
+    <div class="menu-content">
+      <div class="cowbell-icon">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="50" y1="5" x2="50" y2="18" stroke="#8b6914" stroke-width="2.5"/>
+          <path d="M 25 28 L 75 28 L 80 68 L 20 68 Z" fill="url(#cowbellGrad)" stroke="#5c4a1e" stroke-width="2"/>
+          <rect x="18" y="68" width="64" height="6" fill="#5c4a1e"/>
+          <path d="M 30 35 L 40 35 L 32 60 L 22 60 Z" fill="rgba(255,255,255,0.25)"/>
+          <circle cx="50" cy="80" r="4.5" fill="#5c4a1e"/>
+          <line x1="50" y1="74" x2="50" y2="77" stroke="#5c4a1e" stroke-width="2"/>
+          <defs><linearGradient id="cowbellGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe680"/><stop offset="50%" stop-color="#f4b41a"/><stop offset="100%" stop-color="#b8860b"/></linearGradient></defs>
+        </svg>
+      </div>
+      <h1 class="title display-font">COWBELL HERO</h1>
+      <p class="subtitle">I Need More Cowbell</p>
+      <p class="tagline">"I got a fever, and the only prescription is more cowbell!"</p>
+
+      <div class="mode-selector" hidden>
+        <span class="mode-selector-label">Audio Mode</span>
+        <div class="mode-toggle">
+          <button type="button" class="mode-btn active" data-mode="synth">SYNTH</button>
+          <button type="button" class="mode-btn" data-mode="youtube">YOUTUBE</button>
+        </div>
+      </div>
+
+      <div class="song-list" id="song-list"></div>
+      <div class="instructions">
+        <span class="key-hint">↑↓</span> select · <span class="key-hint">SPACE</span> play / ring the cowbell
+      </div>
+    </div>
+  </div>
+
+  <!-- Game -->
+  <div class="screen hidden" id="game-screen">
+    <canvas id="game-canvas"></canvas>
+
+    <div id="yt-container" class="hidden">
+      <div id="yt-label">NOW PLAYING</div>
+      <div id="yt-player"></div>
+    </div>
+
+    <div class="mode-banner hidden" id="synth-banner">
+      <span class="dot"></span>
+      <span>SYNTH MODE</span>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="glow-flash" id="glow-flash"></div>
+
+    <div class="hud">
+      <div class="score-display">
+        <div class="score-label">Score</div>
+        <div class="score-value" id="score-value">0</div>
+      </div>
+      <div class="combo-display">
+        <div class="combo-label">Combo</div>
+        <div class="combo-value" id="combo-value">0</div>
+      </div>
+      <div class="multiplier" id="multiplier">x2</div>
+      <div class="song-info-bar">
+        <div class="song-title-mini" id="song-title-mini"></div>
+        <div id="song-artist-mini"></div>
+        <div id="mode-badge" class="mode-badge synth">SYNTH</div>
+      </div>
+      <div class="fever-meter">
+        <div class="fever-label" id="fever-label">Fever</div>
+        <div class="fever-bar"><div class="fever-fill" id="fever-fill"></div></div>
+      </div>
+      <div class="hit-feedback" id="hit-feedback"></div>
+      <div class="timing-hint" id="timing-hint"></div>
+      <div class="fever-banner" id="fever-banner">FEVER!</div>
+    </div>
+
+    <div class="countdown" id="countdown"></div>
+
+    <div class="pause-overlay" id="pause-overlay">
+      <div class="pause-title">PAUSED</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <button type="button" class="btn" id="resume-btn">RESUME</button>
+        <button type="button" class="btn btn-secondary" id="quit-btn">QUIT</button>
+      </div>
+      <div class="pause-hint">Press P or ESC to resume</div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="screen hidden" id="results-screen">
+    <div class="results-container">
+      <div class="new-record" id="new-record">NEW RECORD!</div>
+      <h2 class="results-title" id="results-title">SET COMPLETE!</h2>
+      <div class="prev-best" id="prev-best"></div>
+      <div class="stars" id="stars">
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-label">Score</div><div class="stat-value" id="final-score">0</div></div>
+        <div class="stat-box"><div class="stat-label">Max Combo</div><div class="stat-value" id="final-combo">0</div></div>
+        <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-value" id="final-accuracy">0%</div></div>
+        <div class="stat-box"><div class="stat-label">Notes Hit</div><div class="stat-value" id="final-notes">0/0</div></div>
+      </div>
+      <div class="results-buttons">
+        <button type="button" class="btn btn-secondary" id="back-btn">MENU</button>
+        <button type="button" class="btn btn-secondary" id="retry-btn">RETRY</button>
+        <button type="button" class="btn" id="next-btn">NEXT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="src/config.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/render.js"></script>
+<script src="src/game.js"></script>
+</body>
+</html>

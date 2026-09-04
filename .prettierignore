@@ -1,0 +1,6 @@
+# The game's hand-tuned dense formatting (one line per short function/rule) is
+# intentional — Prettier would explode it across many more lines. Prettier
+# here only governs new JSON/YAML/Markdown files.
+index.html
+src/*.js
+src/*.css
